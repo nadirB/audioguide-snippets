@@ -1,0 +1,275 @@
+# Your snippets
+#
+# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
+# expand the prefix into a larger code block with templated values.
+#
+# You can create a new snippet in this file by typing "snip" and then hitting
+# tab.
+#
+# An example CoffeeScript snippet to expand log to console.log:
+#
+    # '.source.js':
+    #  'console.log':
+    #    'prefix': 'log'
+    #    'body': 'console.log(${1:"crash"});$2'
+
+# Each scope (e.g. '.source.coffee' above) can only be declared once.
+#
+# This file uses CoffeeScript Object Notation (CSON).
+# If you are unfamiliar with CSON, you can read more about it in the
+# Atom Flight Manual:
+# http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
+
+
+
+
+     '.source.python':
+       'TARGET':
+         'prefix': 'TARGET'
+         'body': 'TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})'
+
+       'CORPUS':
+         'prefix': 'CORPUS'
+         'body': """
+         #simplest
+         CORPUS = [
+
+        csf(${1:"path_to_corpus_files"}),
+
+         #or with more optional keywords arguments
+
+         csf(${2:"pathToFileOrDirectoryOfFiles"}, start=${3:None}, end=${4:None}, includeTimes=[${5:}], excludeTimes=[${6:}], pitchfilter={${7:}}, limit=[${8:}], wholeFile=${9:False}, recursive=${10:True}, includeStr=${11:None}, excludeStr=${12:None}, scaleDb=${13:0.0}, limitDur=${14:None}, clipDurationToTarget=${15:False}, onsetLen=${16:0.01}, offsetLen="${17:30%}", midiPitchMethod="${18:composite}", transMethod=${19:None}, transQuantize=${20:0}, concatFileName=${21:None}, allowRepetition=${22:True}, restrictRepetition=${23:0.5}, restrictOverlaps=${24:None}, restrictInTime=${25:0}, maxPercentTargetSegments=${26:None}, scaleDistance=${27:1}, superimposeRule=${28:None}, segmentationFile=${29:None}, segmentationExtension=".txt")]"""
+
+       'SEARCH':
+         'prefix': 'SEARCH'
+         'body': '
+         SEARCH = [spass("${1:closest}",d ("${2:centroid}"))]
+         # spass(method, list of descriptors, d1, d2, d3,...)+ parameters'
+       'SUPERIMPOSE':
+         'prefix': 'SUPERIMPOSE'
+         'body': '
+         SUPERIMPOSE = si(maxSegment=${1:1})
+         # SUPERIMPOSE documented in 03-superimposition.py'
+
+
+       'CSOUND_CHANNEL_RENDER_METHOD':
+         'prefix': 'CSOUND_CHANNEL_RENDER_METHOD'
+         'body': 'CSOUND_CHANNEL_RENDER_METHOD = "targetoutputmix"'
+       'CSOUND_RENDER_FILEPATH':
+         'prefix': 'CSOUND_RENDER_FILEPATH'
+         'body': 'CSOUND_RENDER_FILEPATH = "${1:filepath/filename.aiff}"'
+       'DICT_OUTPUT_FILEPATH':
+         'prefix': 'DICT_OUTPUT_FILEPATH'
+         'body': 'DICT_OUTPUT_FILEPATH = "${1:filepath/filename.json}"'
+       'MAXMSP_OUTPUT_FILEPATH':
+         'prefix': 'MAXMSP_OUTPUT_FILEPATH'
+         'body': 'MAXMSP_OUTPUT_FILEPATH = "${1:filepath/filename.maxmsp.json}"'
+       'BACH_OUTPUT_FILEPATH':
+         'prefix': 'BACH_OUTPUT_FILEPATH'
+         'body': 'BACH_OUTPUT_FILEPATH = "${1:filepath/filename.bachroll.txt}"'
+       'HTML_LOG_FILEPATH':
+         'prefix': 'HTML_LOG_FILEPATH'
+         'body': 'HTML_LOG_FILEPATH = "${1:filepath/filename.log.html}"'
+       'TARGET_SEGMENT_LABELS_FILEPATH':
+         'prefix': 'TARGET_SEGMENT_LABELS_FILEPATH'
+         'body': 'TARGET_SEGMENT_LABELS_FILEPATH = "${1:filepath/filename.seg.txt}"'
+       'TARGET_SEGMENTATION_GRAPH_FILEPATH':
+         'prefix': 'TARGET_SEGMENTATION_GRAPH_FILEPATH'
+         'body': 'TARGET_SEGMENTATION_GRAPH_FILEPATH = "${1:filepath/filename.targetseg.png}"'
+       'MIDI_FILEPATH':
+         'prefix': 'MIDI_FILEPATH'
+         'body': 'MIDI_FILEPATH = "${1:filepath/filename.mid}"'
+       'TARGET_DESCRIPTORS_FILEPATH':
+         'prefix': 'TARGET_DESCRIPTORS_FILEPATH'
+         'body': 'TARGET_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetdesc.txt}"'
+       'TARGET_PLOT_DESCRIPTORS_FILEPATH':
+         'prefix': 'TARGET_PLOT_DESCRIPTORS_FILEPATH'
+         'body': 'TARGET_PLOT_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetplot.png}"'
+
+
+        'SFLIST':
+          'prefix': 'SFLIST'
+          'body': """
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [csf(${4:"path_to_corpus_files"}]
+
+           SEARCH = [spass("${5:closest}",d ("${6:centroid}"))]
+
+           SUPERIMPOSE = si(maxSegment=${7:1})
+
+           CORPUS_GLOBAL_ATTRIBUTES = {
+             'WholeFile': ${8:True},
+             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
+             }"""
+
+        'SF_INCLUDING_TIMES':
+          'prefix': 'SF_INCLUDING_TIMES'
+          'body': """
+          #1st classical approach of the corpus when using long sound files (after applying a segmentation)
+
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [csf(${4:"path_to_corpus_files"}, start=${5:time_seconds}, end=${6:time_seconds}
+           #or
+           csf(${7:"path_to_corpus_files"}, includingTimes=[[${8:time_seconds},${9:time_seconds}]]
+          ]
+
+           SEARCH = [spass("${10:closest}",d ("${11:centroid}"))]
+
+           SUPERIMPOSE = si(maxSegment=${12:1})
+
+           CORPUS_GLOBAL_ATTRIBUTES = {
+             #'WholeFile': ${13:True},
+             }
+
+           # for each item list AudioGuide will only use segments from this ressource if the start time falls between those 2 items. We can additionaly 2 number list includeTimes=[[500, 550], [600, 650]]
+           #cf.excludeTimes
+
+             """
+
+        'SF_INCLUDING_STRINGS':
+          'prefix': 'SF_INCLUDING_STRINGS'
+          'body': """
+          #parsing sound file name and retrieve different tags
+
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [
+             csf(${4:"path_to_corpus_files"}, includeStr=${5:"C#"}) # including C#
+           #or
+             csf(${6:"path_to_corpus_files"}, includeStr=[${7:_p_}) # including Piano dynamic
+           #or
+            csf(${8:"path_to_corpus_files"}, scaleDb=[${9:-3})
+            # attenuate or boost the amplitude of each corpus sfile in the folder
+          #or
+            csf(${10:"path_to_corpus_files"}, scaleDb=${11:"filenamedyn"}) #uses the dynamic tag in the sfile name
+          ]
+
+           SEARCH = [spass("${12:closest}",d ("${13:centroid}"))]
+
+           SUPERIMPOSE = si(maxSegment=${14:1})
+
+           CORPUS_GLOBAL_ATTRIBUTES = {
+             'WholeFile': ${15:True},
+             }
+
+           #when dealing with normalized directory of sounds use scaleDb="filenamedyn" in order to make the algorithm attempt to find a dynamic in the sound file in the folder i.e. in the case of a file named harp-p-G3 : apply dynamic variation according to the tag p in the string (recorded nuances)
+
+             """
+
+
+        'CORPUS_KEYWORDS':
+          'prefix': 'CORPUS_KEYWORDS'
+          'body': """
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [csf(${4:"path_to_corpus_files"}, limit="centroid-seg > ${5:1000}"
+
+            #or
+
+            csf(${6:"path_to_corpus_files"}, limit="power-seg < ${7:0.05}")
+
+            #or
+
+            csf(${8:"path_to_corpus_files"}, limit="power-seg < ${9:50%}")
+
+            ]
+
+           SEARCH = [spass("${10:closest}",d ("${11:centroid-seg}"), d(${12:power-seg}))]
+
+           SUPERIMPOSE = si(maxSegment=${13:1})
+
+           CORPUS_GLOBAL_ATTRIBUTES = {
+             'WholeFile': ${14:True},
+             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
+             }
+
+            #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
+            Limit according to a salient descriptor.
+
+            """
+        'CORPUS_KEYWORDS_COMBINATION':
+          'prefix': 'CORPUS_KEYWORDS_COMBINATION'
+          'body': """
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [
+             csf("${4:path_to_corpus_files}", limit="centroid-seg > ${5:80%}",
+             csf("${6:path_to_same_corpus_files}", limit="centroid-seg < ${7:20%}")
+
+             #to get the highs and the lows of the corpus for instance.
+
+            ]
+
+            SEARCH = [spass("${8:closest}",d ("${9:centroid-seg}"))]
+
+            SUPERIMPOSE = si(maxSegment=${10:1})
+
+            CORPUS_GLOBAL_ATTRIBUTES = {
+             'WholeFile': ${11:True},
+             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
+             }
+
+             #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
+             Limit according to a salient descriptor.
+
+             """
+        'CORPUS_BALANCE':
+          'prefix': 'CORPUS_BALANCE'
+          'body': """
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [
+             csf("${4:path_to_corpus_files}",scaleDistance=${5:2}",
+             csf("${6:path_to_corpus_files}",scaleDb="${7:filenamedyn}")
+
+             #to get the highs and the lows of the corpus for instance.
+
+            ]
+
+            SEARCH = [spass("${8:closest}",d ("${9:centroid-seg}"))]
+
+            SUPERIMPOSE = si(maxSegment=${10:1})
+
+            CORPUS_GLOBAL_ATTRIBUTES = {
+             'WholeFile': ${11:True},
+             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
+             }
+
+             #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
+             Limit according to a salient descriptor.
+
+             """
+        'CORPUS_PITCH_FILTER':
+          'prefix': 'CORPUS_PITCH_FILTER'
+          'body': """
+           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+
+           CORPUS = [
+           csf("${4:path_to_corpus_files}",pitchfilter={"pitches":[${5:60}, ${6:E4}, ${7:67}, ...], "tolerance":${8:3}})
+
+             #tell audioguide, before concatenantion happens, to remove any sound in the sfile folder that doesn't have any pitch in the list. Tolerance: transposes them in semi-tones to the nearest pitch.
+            ]
+
+            SEARCH = [
+            spass("${9:closest_percent}",d("${10:effDur-seg}"), d("${11:power-seg}"), percent=${12:10})),
+            spass("${13:closest}",d("${14:mfccs}"))
+            ]
+
+            SUPERIMPOSE = si(maxSegment=${15:1})
+
+            CORPUS_GLOBAL_ATTRIBUTES = {
+             'wholeFile': ${16:True},
+
+             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments. Apply to the whole corpus. To get precise filtering for each corpus, apply different filters for each one of them.
+
+             # 'limit':['power-seg > 50%']
+             #AudioGuide analyses all the corpus looking for power average and then filters the ones above 50%
+
+
+             }
+
+
+
+             """
