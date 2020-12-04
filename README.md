@@ -2,16 +2,21 @@
 
 AudioGuide Command Snippets.
 
+Snippets allow you to enter a simple prefix in the editor and hit "Tab" to expand the prefix into a larger code block with templated values. We can continue pressing Tab and the cursor will move to the next value of the body tag or "Shift+Tab" to go backwards.
+
 Install :
 
-This is an Atom Editor Package. Go to Atom's preferences then to the Install tab.
+This is an Atom Editor Package for Dr Ben Hackbarth's AudioGuide : https://github.com/benhackbarth/audioguide
+
+Go to Atom's preferences then to the Install tab.
 Search for the audioguide-snippets package then click install (re-launch Atom if necessary).
 
 Usage :
 
-Snippets allow you to enter a simple prefix in the editor and hit "Tab" to expand the prefix into a larger code block with templated values. We can continue pressing Tab and the cursor will move to the next value of the body tag or "Shift+Tab" to go backwards.
+To see all the available snippets for the AudioGuide filetype that you currently have open, choose "Snippets: Available" in the Command Palette "Shif+Cmd+P"
+Or type keywords in an audioguide python script in order to show the snippets,
+and hit tab to expand the corresponding code block with templated values.   
 
-To see all the available snippets for the AudioGuide(python)filetype that you currently have open, choose "Snippets: Available" in the Command Palette "Shif+Cmd+P"
 
 In order to evaluate AudioGuide scripts within Atom install the atom-ide-terminal package.
 
