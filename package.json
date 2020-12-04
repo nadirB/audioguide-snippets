@@ -1,17 +1,18 @@
 {
   "name": "audioguide-snippets",
-  "author": "nadir B. <hecceite@free.fr>",
   "main": "./lib/audioguide-snippets",
   "version": "0.0.0",
-  "description": "AudioGuide Command Snippets ",
-  "keywords": [ "audioguide", "concatenative synthesis"
+  "description": "AudioGuide Command Snippets",
+  "keywords": [
   ],
   "activationCommands": {
     "atom-workspace": "audioguide-snippets:toggle"
   },
-  "repository": "https://github.com/nadirB/audioguide-snippets.git",
+  "repository": "https://github.com/nadirB/audioguide-snippets",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
   }
 }
