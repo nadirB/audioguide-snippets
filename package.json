@@ -1,7 +1,7 @@
 {
   "name": "audioguide-snippets",
   "main": "./lib/audioguide-snippets",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "AudioGuide commands' snippets ",
   "keywords": [
   ],
