@@ -3,7 +3,7 @@
   "main": "./lib/audioguide-snippets",
   "version": "0.0.0",
   "description": "AudioGuide Command Snippets ",
-  "keywords": [
+  "keywords": [ audioguide, concatenative synthesis
   ],
   "activationCommands": {
     "atom-workspace": "audioguide-snippets:toggle"
