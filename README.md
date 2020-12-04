@@ -23,4 +23,4 @@ In order to evaluate AudioGuide scripts within Atom install the platformio-ide-t
 
 
 
-![A screenshot of your package](https://github.com/nadirB/audioguide-snippets/blob/main/audioguide-snippets-screen.gif)
+![A screenshot of your package](https://github.com/nadirB/audioguide-snippets/blob/master/audioguide-snippets-screen.gif)
