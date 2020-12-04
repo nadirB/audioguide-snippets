@@ -19,7 +19,7 @@ Or type keywords in an audioguide python script in order to show the snippets,
 and hit tab to expand the corresponding code block with templated values.   
 
 
-In order to evaluate AudioGuide scripts within Atom install the atom-ide-terminal package.
+In order to evaluate AudioGuide scripts within Atom install the platformio-ide-terminal package.
 
 
 
