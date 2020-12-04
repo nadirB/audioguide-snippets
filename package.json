@@ -1,5 +1,5 @@
   "name": "audioguide-snippets",
-  "author": "nadir B. <hecceite@free.fr>"
+  "author": "nadir B. <hecceite@free.fr>",
   "main": "./lib/audioguide-snippets",
   "version": "0.0.0",
   "description": "AudioGuide Command Snippets ",
