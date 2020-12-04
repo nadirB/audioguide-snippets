@@ -7,7 +7,7 @@
          'body': """
           # The script you use to segment your corpus files according to its acoustic features is called agSegmentSf.py. AgSegmentSf.py creates textfiles which denote the start and stop times of sound segments in a multi-segment audiofile. To segment a corpus file, cd into the AudioGuide1.5 folder and run the following command :
 
-            python agSegmentSf.py "examples/lachenmann.aiff"
+          python agSegmentSf.py "examples/lachenmann.aiff"
 
           # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
 
