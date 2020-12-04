@@ -8,7 +8,7 @@
   "activationCommands": {
     "atom-workspace": "audioguide-snippets:toggle"
   },
-  "repository": "https://github.com/atom/audioguide-snippets",
+  "repository": "https://github.com/nadirB/audioguide-snippets",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
