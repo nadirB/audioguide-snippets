@@ -13,7 +13,8 @@ Search for the audioguide-snippets package then click install (re-launch Atom if
 
 Usage :
 
-To see all the available snippets for the AudioGuide filetype that you currently have open, choose "Snippets: Available" in the Command Palette "Shif+Cmd+P"
+To see all the available snippets for the AudioGuide filetype that you currently have open, choose "Snippets: Available" in the Command Palette "Shif+Cmd+P".
+
 Or type keywords in an audioguide python script in order to show the snippets,
 and hit tab to expand the corresponding code block with templated values.   
 
