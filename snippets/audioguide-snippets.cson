@@ -1,275 +1,750 @@
-# Your snippets
-#
-# Atom snippets allow you to enter a simple prefix in the editor and hit tab to
-# expand the prefix into a larger code block with templated values.
-#
-# You can create a new snippet in this file by typing "snip" and then hitting
-# tab.
-#
-# An example CoffeeScript snippet to expand log to console.log:
-#
-    # '.source.js':
-    #  'console.log':
-    #    'prefix': 'log'
-    #    'body': 'console.log(${1:"crash"});$2'
-
-# Each scope (e.g. '.source.coffee' above) can only be declared once.
-#
-# This file uses CoffeeScript Object Notation (CSON).
-# If you are unfamiliar with CSON, you can read more about it in the
-# Atom Flight Manual:
-# http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
-
-
-
+#Corpus Segmentation with agSegmentSf.py
 
      '.source.python':
-       'TARGET':
-         'prefix': 'TARGET'
-         'body': 'TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})'
 
-       'CORPUS':
-         'prefix': 'CORPUS'
+       'agSegmentSf':
+         'prefix': 'agSegmentSf'
          'body': """
-         #simplest
-         CORPUS = [
+          # The script you use to segment your corpus files according to its acoustic features is called agSegmentSf.py. AgSegmentSf.py creates textfiles which denote the start and stop times of sound segments in a multi-segment audiofile. To segment a corpus file, cd into the AudioGuide1.5 folder and run the following command :
 
-        csf(${1:"path_to_corpus_files"}),
+            python agSegmentSf.py "examples/lachenmann.aiff"
 
-         #or with more optional keywords arguments
+          # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
 
-         csf(${2:"pathToFileOrDirectoryOfFiles"}, start=${3:None}, end=${4:None}, includeTimes=[${5:}], excludeTimes=[${6:}], pitchfilter={${7:}}, limit=[${8:}], wholeFile=${9:False}, recursive=${10:True}, includeStr=${11:None}, excludeStr=${12:None}, scaleDb=${13:0.0}, limitDur=${14:None}, clipDurationToTarget=${15:False}, onsetLen=${16:0.01}, offsetLen="${17:30%}", midiPitchMethod="${18:composite}", transMethod=${19:None}, transQuantize=${20:0}, concatFileName=${21:None}, allowRepetition=${22:True}, restrictRepetition=${23:0.5}, restrictOverlaps=${24:None}, restrictInTime=${25:0}, maxPercentTargetSegments=${26:None}, scaleDistance=${27:1}, superimposeRule=${28:None}, segmentationFile=${29:None}, segmentationExtension=".txt")]"""
+          Cf. docs_v1.5.html
+          """
+
+#Corpus Segmentation with agGranuateSf.py
+
+       'agGranuateSf':
+         'prefix': 'agGranuateSf'
+         'body': """
+          # A script you can use to segment your corpus files for use with granular synthesis is called ‘agGranulateSf.py’. Like agSegmentSf.py, agGranulateSf.py creates textfiles which denote the start and stop times of sound segments in a multi-segment audiofile. Unlike agSegmentSf.py, this script chops up a soundfile into evenly size grains and provides a mechanism for adjusting grain overlap. To segment a corpus file, ‘cd’ into the AudioGuide1.5 folder and run the following command:
+
+          python agGranuateSf.py examples/lachenmann.aiff
+
+          # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
+
+          # It is important to note that, if you wish to window each grain with a fade in and fade out when concatenating, you will need to use the csf() onsetLen and offsetLen keyword arguments.
+
+          csf('lachenmann.aiff', onsetLen='50%', offsetLen='50%')
+
+          Cf. docs_v1.5.html
+          """
+
+#Finessing Corpus Segmentation
+
+       'agSegmentSf_flags':
+         'prefix': 'agSegmentSf_flags'
+         'body': """
+         python agSegmentSf.py -t -30 -d 4 "examples/lachenmann.aiff"
+
+         # sets the threshold to -30. it will produce less onsets then -40 (the default). also changes the drop dB value to 4 dB above the minimum amplitude found in the entire soundfile, likely leading to longer segments.
+
+         python agSegmentSf.py -r 4 "examples/lachenmann.aiff"
+
+         # changes the rise ratio from the default (1.1) to 4. This means that a frame's amplitude must be four times louder than the previous one to start a new segment
+
+         Cf. docs_v1.5.html
+         """
+#Whole Directory Segmentation
+
+       'agSegmentSf_MyDir':
+         'prefix': 'agSegmentSf_myDir'
+         'body': """
+         # Note that to segment a whole directory of soundfiles, you may use wildcard characters in the bash shell, as in:
+
+        python agSegmentSf.py mydir/*.aiff
+
+        # create a segmentation file for each aiff file located in mydir/
+
+        Cf. docs_v1.5.html
+
+         """
+
+#Concatenating with agConcatenate.py
+
+       'agConcatenate':
+         'prefix': 'agConcatenate'
+         'body': """
+          # Once you have segmented corpus soundfiles to your satisfaction, you are ready to call the concatenation script agConcatenate.py with a special AudioGuide1.5 options file as the first (and only) argument.
+
+          python agConcatenate.py examples/01-simplest.py
+
+          # ...which will use the options contained in ‘examples/01-simplest.py’ to parameterize the concatenative algorithm. In this options file you specify a target sound, the corpus sounds, and (if you like) lots of other options that parameterize the concatenative process. When run, the ‘agConcatenate.py’ script will perform the following operations:
+
+          # Run an ircamdescriptor analysis of the soundfile in the TARGET variable (note: the analysis is only done once -- subsequent usages of this soundfile simply read data from disk. Analysis files are stored in a directory called ‘AudioGuide1.5/audioguide/data/’ in the AudioGuide1.5 folder. This directory can become quite large since these files are quite substantial in size. Removing this folder will cause all analysis files to be recomputed).
+
+          # Segment the target sound according to your options file. An Audacity-style label file is created in a file called ‘output/tgtlabels.txt’ in the output directory.
+
+          # Run an ircamdescriptor analysis of the soundfiles in the CORPUS variable (only the first time each of these files are used).
+
+          # (If you’ve specified them) Remove corpus segments according to descriptor limitations (Nothing above a certain pitch, nothing below a certain dynamic, etc.).
+
+          # Normalize target and corpus descriptor data according to your options file (see this discussion and the "norm" and "normmethod" in the section Descriptors and the d() object).
+
+          # Go through each target segment one by one. Select corpus segment(s) to match each target segment according to the normalized descriptors and search passes in the SEARCH variable (see the section SEARCH variable and spass() object) of your options file. Control over the layering and superimposition of corpus sounds is specified in the SUPERIMPOSE variable (see the section The SUPERIMPOSE variable and si() object).
+
+          # Write selected segments to a csound score called ‘output/output.csd’. (In addition to the csd file there are many other types of outputs (see the section Concatenation Output Files).
+
+          # If you have csound, ‘output/output.csd’ is rendered with csound to create an audiofile called ‘output/output.aiff’.
+
+          # If you have csound, automatic playback of ‘output/output.aiff’ at the command line.
+
+          # The options file used by the concatenate script is a python file that defines a bunch of variables. Most variables are simply floats and strings. For instance, to change the path of the csound output sound file, add the following line to your options file:
+
+          CSOUND_RENDER_FILEPATH = '/path/to/the/file/i/want.aiff'
+
+          # sets the path of the csound output aiff file
+
+          DESCRIPTOR_HOP_SIZE_SEC = 0.02049
+
+          # change the analysis hop size
+
+          Cf. docs_v1.5.html
+          """
+
+############################################
+#The TARGET Variable and tsf() object
+
+       'tsf()':
+         'prefix': 'tsf()'
+         'body': """
+          # The TARGET variable is written as a tsf() object which requires a path to a soundfile and also takes the following optional keyword arguments:
+
+            tsf('pathtosoundfile', start=0, end=file-length, thresh=-40, offsetRise=1.5, offsetThreshAdd=+12, offsetThreshAbs=-80, scaleDb=0, minSegLen=0.05, maxSegLen=1000, midiPitchMethod='composite', stretch=1, segmentationFilepath=None)
+
+          TARGET = tsf('cage.aiff') # uses the whole soundfile at its given amplitude
+
+          TARGET = tsf('cage.aiff', start=5, end=7, scaleDb=6) # only use seconds 5-7 of cage.aiff at double the amplitude.
+
+          TARGET = tsf('cage.aiff', start=2, end=3, stretch=2) # only uses seconds 2-3, but stretches the sound with supervp to twice its duration before concatenation. Note that, in order to use this option, you must set the SUPERVP_BIN variable in the AudioGuide1.5/audioguide/defaults.py file.
+
+          Cf. docs_v1.5.html
+          """
+
+############################################
+#The CORPUS Variable and csf() object
+
+       'csf()':
+         'prefix': 'csf()'
+         'body': """
+          # The CORPUS variable is defined as a list of csf() objects which require a path to a soundfile OR a directory. File paths and/or directory paths may be full paths or relative paths to the location of the options file you’re using or a path found in the SEARCH_PATHS variable. A csf() object required the soundfile/directory name, then takes the following optional keyword arguments:
+
+          csf(${2:"pathToFileOrDirectoryOfFiles"}, start=${3:None}, end=${4:None},
+          includeTimes=[${5:}], excludeTimes=[${6:}], pitchfilter={${7:}}, limit=[${8:}],
+          wholeFile=${9:False}, recursive=${10:True}, includeStr=${11:None}, excludeStr=${12:None},
+          scaleDb=${13:0.0}, limitDur=${14:None}, clipDurationToTarget=${15:False},
+          onsetLen=${16:0.01}, offsetLen="${17:30%}", midiPitchMethod="${18:composite}",
+          transMethod=${19:None}, transQuantize=${20:0}, concatFileName=${21:None},
+          allowRepetition=${22:True}, restrictRepetition=${23:0.5}, restrictOverlaps=${24:None}, restrictInTime=${25:0}, maxPercentTargetSegments=${26:None}, scaleDistance=${27:1}, superimposeRule=${28:None}, segmentationFile=${29:None}, segmentationExtension="${30:.txt}")
+
+          #The simplest way to include a soundfile in your corpus is to use its path as the first argument of the csf() object:
+
+          CORPUS = [csf("lachenmann.aiff")]
+
+          # will search for a segmentation file called lachenmann.aiff.txt and add all of its segments to the corpus
+
+          #The simplest way to include a directory of soundfiles in your corpus is to use its path as the first argument of the csf() object:
+
+          CORPUS = [csf("lachenmann.aiff"), csf('piano')]
+
+          # will use segments from lachenmann.aiff as well as all sounds in the directory called piano
+
+          # Note that csf segments may also be specified as a list of lists. Each segment should be given as ['path', starttime, endtime]. If endtime = None, the duration of the soundfile is used. See example below:
+
+          CORPUS = [csf([['myfile1.wav', 14.5, 15.3], ['myfile1.wav', 103.7, 104.1], ['myfile2.wav', 0, None]])]
+
+          # will use two segments from myfile1.wav and then entire file myfile2.wav as the corpus
+
+          Cf. docs_v1.5.html
+          """
+
+##############################################
+#Descriptors and the d() object
+
+       'Descriptors':
+         'prefix': 'd()'
+         'body': """
+          # Use the d() object to specify a descriptor, how it is weighted, and how it is normalized. The d() object takes 1 argument -- the name of the desired descriptor -- and then several optional keywords arguments, detailed below.  :
+
+          d('descriptor name', weight=1, norm=2, normmethod='stddev', distance='euclidean', energyWeight=False)
+
+          # - descriptor name - a string of the name of the desired descriptor. Note that most (but not all) descriptors have both a time varying version as well as a power-weighted averaged version (‘-seg’). All possible descriptors are listed in Appendix 1.
+
+          # - weight - How to weight this descriptor in relation to other descriptors.
+
+          SEARCH= [spass('closest', d('centroid', weight=1), d('noisiness', weight=0.5))]
+
+          # centroid is twice as important as noisiness.
+
+          # - norm - A value of 2 normalizes the target and corpus data separately. A value of 1 normalizes the target and corpus data together. 2 will yield a better rendering of the target’s morphological contour. 1 will remain more faithful to concrete descriptor values. I recommend using 2 by default, only using 1 when dealing with very ‘descriptive’ descriptors like duration or pitch.
+
+          SEARCH = [spass('closest', d('centroid'), d('effDur-seg', norm=1))]
+
+          # - normmethod - How to normalize data -- either ‘stddev’ or ‘minmax’. minmax is more precise, stddev is more forgiving of ‘outliers.’
+
+          # - distance - Only valid for time-varying descriptors. How to arithmetically measure distance between target and corpus arrays.
+
+          # ‘euclidean’ - does a simple least squares distance.
+          # ‘pearson’ - a pearson correlation measurement.
+
+          SEARCH = [spass('closest', d('centroid', distance='pearson'))]
+
+          # uses a pearson correlation formula for determining distance between target and corpus centroid arrays.
+
+          # - energyWeight - Only valid for time-varying descriptors. Weight distance calculations with the corpus segments’ energy values. The means that softer frames will not affect distance as much as louder frames. Only works if distance=‘euclidean’.
+
+          # Cf. docs_v1.5.html
+          """
+
+###############################################SEARCH variable and spass() object
 
        'SEARCH':
          'prefix': 'SEARCH'
-         'body': '
-         SEARCH = [spass("${1:closest}",d ("${2:centroid}"))]
-         # spass(method, list of descriptors, d1, d2, d3,...)+ parameters'
+         'body': """
+         # The SEARCH variable tells AudioGuide how to pick corpus segments to match target segments. The SEARCH variable is a list of spass() objects which is evaluated in order for each segment in the target soundfile. Multiple search operations are chained together -- the output of each spass() becomes the input of the following spass().
+
+         # spass(method, list of descriptors, d1, d2, d3,...) + keywords.
+         # Cf. docs_v1.5.html
+         # Documented in 02-searching.py
+
+         SEARCH = [
+           spass(...),
+           # first spass. the input is all valid corpus samples
+
+           spass(...),
+           # second spass. the input is the output from the previous spass
+         ]
+
+         SEARCH = [
+           spass("${1:closest}",d ("${2:centroid}"))
+         ]
+         """
+
+#############################################
+#The SUPERIMPOSE variable and si() object
+
        'SUPERIMPOSE':
          'prefix': 'SUPERIMPOSE'
-         'body': '
-         SUPERIMPOSE = si(maxSegment=${1:1})
-         # SUPERIMPOSE documented in 03-superimposition.py'
+         'body': """
+         # Use the si() object for specifying how corpus segments may be superimposed during concatenation.
+
+         SUPERIMPOSE = si(minSegment=${1:None}, maxSegment=${2:None}, minOnset=${3:None}, maxOnset=${4:8}, minOverlap=${5:None}, maxOverlap=${6:None}, searchOrder=${7:'power'}, calcMethod=${8:'mixture'})
+
+         # Cf. docs_v1.5.html
+         # SUPERIMPOSE documented in 03-superimposition.py
+         """
+
+##############################################
+#Creating Notated Scores
+#score() and instr()
+
+       'score()':
+         'prefix': 'score()'
+         'body': """
+
+         # The score() object permits elements of the CORPUS to be translated into musical notation via bach in Max/MSP
+
+         # The score() object is assigned to 'INSTRUMENTS' in the options file. score() consists of a list of instru() objects, each of which represents an instrument in the output score. instr()s are linked to cps() entries through their first argument, the instrTag string.
+
+         # here, the corpus consists of pizzicato and arco string samples tagged with the string 'violin'
+
+         CORPUS = [
+         csf("pizzicato/", instrTag='violin', wholeFile=True),
+         csf("arco/", instrTag='violin', wholeFile=True),
+         ]
+
+         # instruments specifies a score() consisting of a solo violin which is linked to both corpus items through the 'violin' instrTag.
+
+         INSTRUMENTS = score(
+         instr('violin'),
+         )
+
+         # Cf. docs_v1.5.html
+         """
+
+##############################################
+#
+
+       'score_multi_instr()':
+         'prefix': 'score_multi_instr()'
+         'body': """
+
+         # score() may have multiple instr()s with the same instrTag; this indicates that there are more than one of a certain type of instrument in the ensemble that can use the same corpus resources.
+
+        CORPUS = [
+        csf("pizzicato/", instrTag='violin', wholeFile=True),
+        csf("arco/", instrTag='violin', wholeFile=True),
+        csf("pizzicato/", instrTag='viola', wholeFile=True),
+        csf("arco/", instrTag='viola', wholeFile=True),
+        csf("pizzicato/", instrTag='cello', wholeFile=True),
+        ]
+
+        INSTRUMENTS = score(
+        instr('violin'),
+        instr('violin'),
+        instr('viola', clef='Alto'),
+        instr('cello', clef='F'), # only has pizz
+        )
+
+         # Cf. docs_v1.5.html
+         """
+
+############################################
+#instr()
+
+       'instr()':
+         'prefix': 'instr()'
+         'body': """
+
+         # the instr() object has keywords that affect the instrument's behavoir and how the instrument is translated into musical notation.
+
+         instr('instrTag', temporal_mode=${1:'sus'}, minspeed=${2:0.075}, interval_limit_breakpoints=[${3:}], interval_limit_range_per_sec=${4:None}, pitchoverride=${5:None}, polyphony_max_voices=${6:1}, polyphony_max_range=${7:None}, polyphony_min_range=${8:None}, polyphony_permit_unison=${9:False}, polyphony_max_db_difference=${10:4}, technique_switch_delay_map=[${11:}], clef='${12:G}', key='${13:CM}'))
+
+         # Cf. docs_v1.5.html
+         """
 
 
-       'CSOUND_CHANNEL_RENDER_METHOD':
-         'prefix': 'CSOUND_CHANNEL_RENDER_METHOD'
-         'body': 'CSOUND_CHANNEL_RENDER_METHOD = "targetoutputmix"'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#defaults'
+
+##############  OUTPUT FILES  #############
+
+# CSOUND_CSD_FILEPATH = 'output/output.csd'
+
+       'CSOUND_CSD_FILEPATH':
+         'prefix': 'CSOUND_CSD_FILEPATH'
+         'body': 'CSOUND_CSD_FILEPATH = "${1:filepath/filename.csd}"'
+
+# CSOUND_RENDER_FILEPATH = 'output/output.aiff'
+
        'CSOUND_RENDER_FILEPATH':
          'prefix': 'CSOUND_RENDER_FILEPATH'
          'body': 'CSOUND_RENDER_FILEPATH = "${1:filepath/filename.aiff}"'
-       'DICT_OUTPUT_FILEPATH':
-         'prefix': 'DICT_OUTPUT_FILEPATH'
-         'body': 'DICT_OUTPUT_FILEPATH = "${1:filepath/filename.json}"'
-       'MAXMSP_OUTPUT_FILEPATH':
-         'prefix': 'MAXMSP_OUTPUT_FILEPATH'
-         'body': 'MAXMSP_OUTPUT_FILEPATH = "${1:filepath/filename.maxmsp.json}"'
-       'BACH_OUTPUT_FILEPATH':
-         'prefix': 'BACH_OUTPUT_FILEPATH'
-         'body': 'BACH_OUTPUT_FILEPATH = "${1:filepath/filename.bachroll.txt}"'
+
+# HTML_LOG_FILEPATH = 'output/log.html'
+
        'HTML_LOG_FILEPATH':
          'prefix': 'HTML_LOG_FILEPATH'
          'body': 'HTML_LOG_FILEPATH = "${1:filepath/filename.log.html}"'
-       'TARGET_SEGMENT_LABELS_FILEPATH':
-         'prefix': 'TARGET_SEGMENT_LABELS_FILEPATH'
-         'body': 'TARGET_SEGMENT_LABELS_FILEPATH = "${1:filepath/filename.seg.txt}"'
-       'TARGET_SEGMENTATION_GRAPH_FILEPATH':
-         'prefix': 'TARGET_SEGMENTATION_GRAPH_FILEPATH'
-         'body': 'TARGET_SEGMENTATION_GRAPH_FILEPATH = "${1:filepath/filename.targetseg.png}"'
-       'MIDI_FILEPATH':
-         'prefix': 'MIDI_FILEPATH'
-         'body': 'MIDI_FILEPATH = "${1:filepath/filename.mid}"'
-       'TARGET_DESCRIPTORS_FILEPATH':
-         'prefix': 'TARGET_DESCRIPTORS_FILEPATH'
-         'body': 'TARGET_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetdesc.txt}"'
-       'TARGET_PLOT_DESCRIPTORS_FILEPATH':
-         'prefix': 'TARGET_PLOT_DESCRIPTORS_FILEPATH'
-         'body': 'TARGET_PLOT_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetplot.png}"'
+
+# MIDI_FILEPATH = None # 'output/output.mid'
+
+        'MIDI_FILEPATH':
+          'prefix': 'MIDI_FILEPATH'
+          'body': 'MIDI_FILEPATH = "${1:filepath/filename.mid}"'
+
+# MIDIFILE_TEMPO = 60.
+
+        'MIDIFILE_TEMPO':
+          'prefix': 'MIDIFILE_TEMPO'
+          'body': 'MIDIFILE_TEMPO = "${1:60.}"'
+
+# TARGET_SEGMENT_LABELS_FILEPATH = 'output/targetlabels.txt'
+
+        'TARGET_SEGMENT_LABELS_FILEPATH':
+          'prefix': 'TARGET_SEGMENT_LABELS_FILEPATH'
+          'body': 'TARGET_SEGMENT_LABELS_FILEPATH = "${1:filepath/filename.targetlabels.txt}"'
+
+# TARGET_SEGMENTATION_GRAPH_FILEPATH = None #'output/targetlabels.jpg'
+
+        'TARGET_SEGMENTATION_GRAPH_FILEPATH':
+          'prefix': 'TARGET_SEGMENTATION_GRAPH_FILEPATH'
+          'body': 'TARGET_SEGMENTATION_GRAPH_FILEPATH = "${1:filepath/filename.targetlbels.jpg}"'
+
+# OUTPUT_LABEL_FILEPATH = 'output/outputlabels.txt'
+
+        'OUTPUT_LABEL_FILEPATH':
+          'prefix': 'OUTPUT_LABEL_FILEPATH'
+          'body': 'OUTPUT_LABEL_FILEPATH = "${1:filepath/filename.labels.txt}"'
+
+# LISP_OUTPUT_FILEPATH = None #'output/output.lisp.txt'
+
+        'LISP_OUTPUT_FILEPATH':
+          'prefix': 'LISP_OUTPUT_FILEPATH'
+          'body': 'LISP_OUTPUT_FILEPATH = "${1:filepath/filename.lisp.txt}"'
 
 
-        'SFLIST':
-          'prefix': 'SFLIST'
-          'body': """
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+# DATA_FROM_SEGMENTATION_FILEPATH = None #'output/datafromsegmentation.txt'
 
-           CORPUS = [csf(${4:"path_to_corpus_files"}]
-
-           SEARCH = [spass("${5:closest}",d ("${6:centroid}"))]
-
-           SUPERIMPOSE = si(maxSegment=${7:1})
-
-           CORPUS_GLOBAL_ATTRIBUTES = {
-             'WholeFile': ${8:True},
-             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
-             }"""
-
-        'SF_INCLUDING_TIMES':
-          'prefix': 'SF_INCLUDING_TIMES'
-          'body': """
-          #1st classical approach of the corpus when using long sound files (after applying a segmentation)
-
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
-
-           CORPUS = [csf(${4:"path_to_corpus_files"}, start=${5:time_seconds}, end=${6:time_seconds}
-           #or
-           csf(${7:"path_to_corpus_files"}, includingTimes=[[${8:time_seconds},${9:time_seconds}]]
-          ]
-
-           SEARCH = [spass("${10:closest}",d ("${11:centroid}"))]
-
-           SUPERIMPOSE = si(maxSegment=${12:1})
-
-           CORPUS_GLOBAL_ATTRIBUTES = {
-             #'WholeFile': ${13:True},
-             }
-
-           # for each item list AudioGuide will only use segments from this ressource if the start time falls between those 2 items. We can additionaly 2 number list includeTimes=[[500, 550], [600, 650]]
-           #cf.excludeTimes
-
-             """
-
-        'SF_INCLUDING_STRINGS':
-          'prefix': 'SF_INCLUDING_STRINGS'
-          'body': """
-          #parsing sound file name and retrieve different tags
-
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
-
-           CORPUS = [
-             csf(${4:"path_to_corpus_files"}, includeStr=${5:"C#"}) # including C#
-           #or
-             csf(${6:"path_to_corpus_files"}, includeStr=[${7:_p_}) # including Piano dynamic
-           #or
-            csf(${8:"path_to_corpus_files"}, scaleDb=[${9:-3})
-            # attenuate or boost the amplitude of each corpus sfile in the folder
-          #or
-            csf(${10:"path_to_corpus_files"}, scaleDb=${11:"filenamedyn"}) #uses the dynamic tag in the sfile name
-          ]
-
-           SEARCH = [spass("${12:closest}",d ("${13:centroid}"))]
-
-           SUPERIMPOSE = si(maxSegment=${14:1})
-
-           CORPUS_GLOBAL_ATTRIBUTES = {
-             'WholeFile': ${15:True},
-             }
-
-           #when dealing with normalized directory of sounds use scaleDb="filenamedyn" in order to make the algorithm attempt to find a dynamic in the sound file in the folder i.e. in the case of a file named harp-p-G3 : apply dynamic variation according to the tag p in the string (recorded nuances)
-
-             """
+        'DATA_FROM_SEGMENTATION_FILEPATH':
+          'prefix': 'DATA_FROM_SEGMENTATION_FILEPATH'
+          'body': 'DATA_FROM_SEGMENTATION_FILEPATH = None
+          #"${1:filepath/filename.datafromsegmentation.txt}"'
 
 
-        'CORPUS_KEYWORDS':
-          'prefix': 'CORPUS_KEYWORDS'
-          'body': """
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
+# DICT_OUTPUT_FILEPATH = 'output/output.json'
 
-           CORPUS = [csf(${4:"path_to_corpus_files"}, limit="centroid-seg > ${5:1000}"
+       'DICT_OUTPUT_FILEPATH':
+         'prefix': 'DICT_OUTPUT_FILEPATH'
+         'body': 'DICT_OUTPUT_FILEPATH = "${1:filepath/filename.json}"'
 
-            #or
+# MAXMSP_OUTPUT_FILEPATH = 'output/output.maxmsp.json'
 
-            csf(${6:"path_to_corpus_files"}, limit="power-seg < ${7:0.05}")
+       'MAXMSP_OUTPUT_FILEPATH':
+         'prefix': 'MAXMSP_OUTPUT_FILEPATH'
+         'body': 'MAXMSP_OUTPUT_FILEPATH = "${1:filepath/filename.maxmsp.json}"'
 
-            #or
+# SCORE_OUTPUT_FILEPATH = 'output/bachroll.txt'
 
-            csf(${8:"path_to_corpus_files"}, limit="power-seg < ${9:50%}")
+       'BACH_OUTPUT_FILEPATH':
+         'prefix': 'BACH_OUTPUT_FILEPATH'
+         'body': 'BACH_OUTPUT_FILEPATH = "${1:filepath/filename.bachroll.txt}"'
 
-            ]
+#TARGET_DESCRIPTORS_FILEPATH = None # 'output/targetdescriptors.json'
 
-           SEARCH = [spass("${10:closest}",d ("${11:centroid-seg}"), d(${12:power-seg}))]
+        'TARGET_DESCRIPTORS_FILEPATH':
+          'prefix': 'TARGET_DESCRIPTORS_FILEPATH'
+          'body': 'TARGET_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetdescriptors.json}"'
 
-           SUPERIMPOSE = si(maxSegment=${13:1})
+#TARGET_PLOT_DESCRIPTORS_FILEPATH = None #'output/targetplot.jpg'
 
-           CORPUS_GLOBAL_ATTRIBUTES = {
-             'WholeFile': ${14:True},
-             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
-             }
+        'TARGET_PLOT_DESCRIPTORS_FILEPATH':
+          'prefix': 'TARGET_PLOT_DESCRIPTORS_FILEPATH'
+          'body': 'TARGET_PLOT_DESCRIPTORS_FILEPATH = "${1:filepath/filename.targetplot.jpg}"'
 
-            #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
-            Limit according to a salient descriptor.
+# CORPUS_SEGMENTED_FEATURES_JSON_FILEPATH = None
 
-            """
-        'CORPUS_KEYWORDS_COMBINATION':
-          'prefix': 'CORPUS_KEYWORDS_COMBINATION'
-          'body': """
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
-
-           CORPUS = [
-             csf("${4:path_to_corpus_files}", limit="centroid-seg > ${5:80%}",
-             csf("${6:path_to_same_corpus_files}", limit="centroid-seg < ${7:20%}")
-
-             #to get the highs and the lows of the corpus for instance.
-
-            ]
-
-            SEARCH = [spass("${8:closest}",d ("${9:centroid-seg}"))]
-
-            SUPERIMPOSE = si(maxSegment=${10:1})
-
-            CORPUS_GLOBAL_ATTRIBUTES = {
-             'WholeFile': ${11:True},
-             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
-             }
-
-             #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
-             Limit according to a salient descriptor.
-
-             """
-        'CORPUS_BALANCE':
-          'prefix': 'CORPUS_BALANCE'
-          'body': """
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
-
-           CORPUS = [
-             csf("${4:path_to_corpus_files}",scaleDistance=${5:2}",
-             csf("${6:path_to_corpus_files}",scaleDb="${7:filenamedyn}")
-
-             #to get the highs and the lows of the corpus for instance.
-
-            ]
-
-            SEARCH = [spass("${8:closest}",d ("${9:centroid-seg}"))]
-
-            SUPERIMPOSE = si(maxSegment=${10:1})
-
-            CORPUS_GLOBAL_ATTRIBUTES = {
-             'WholeFile': ${11:True},
-             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments.
-             }
-
-             #before concatenation audioguide looks into the sfiles directory and the average centroid of each file then excludes anything that is higher than 1000Hz.
-             Limit according to a salient descriptor.
-
-             """
-        'CORPUS_PITCH_FILTER':
-          'prefix': 'CORPUS_PITCH_FILTER'
-          'body': """
-           TARGET = tsf(${1:"target_file"}, thresh=${2:-25}, offsetRise=${3:1.5})
-
-           CORPUS = [
-           csf("${4:path_to_corpus_files}",pitchfilter={"pitches":[${5:60}, ${6:E4}, ${7:67}, ...], "tolerance":${8:3}})
-
-             #tell audioguide, before concatenantion happens, to remove any sound in the sfile folder that doesn't have any pitch in the list. Tolerance: transposes them in semi-tones to the nearest pitch.
-            ]
-
-            SEARCH = [
-            spass("${9:closest_percent}",d("${10:effDur-seg}"), d("${11:power-seg}"), percent=${12:10})),
-            spass("${13:closest}",d("${14:mfccs}"))
-            ]
-
-            SUPERIMPOSE = si(maxSegment=${15:1})
-
-            CORPUS_GLOBAL_ATTRIBUTES = {
-             'wholeFile': ${16:True},
-
-             #tells AudioGuide not to look for a segmentation file, rather look for any file in the folder as corpus segments. Apply to the whole corpus. To get precise filtering for each corpus, apply different filters for each one of them.
-
-             # 'limit':['power-seg > 50%']
-             #AudioGuide analyses all the corpus looking for power average and then filters the ones above 50%
+        'CORPUS_SEGMENTED_FEATURES_JSON_FILEPATH':
+          'prefix': 'CORPUS_SEGMENTED_FEATURES_JSON_FILEPATH'
+          'body': 'CORPUS_SEGMENTED_FEATURES_JSON_FILEPATH = None'
 
 
-             }
+#
+# ##########  CORPUS   #######
+# SEARCH = []
+# CORPUS_GLOBAL_ATTRIBUTES = {}
+
+        'CORPUS_GLOBAL_ATTRIBUTES':
+          'prefix': 'CORPUS_GLOBAL_ATTRIBUTES'
+          'body': 'CORPUS_GLOBAL_ATTRIBUTES = {${1:}}'
+
+# VOICE_PATTERN = []
+
+        'VOICE_PATTERN':
+          'prefix': 'VOICE_PATTERN'
+          'body': 'VOICE_PATTERN = [${1:}]'
+
+# VOICE_TO_ONSET_MAPPING = []
+
+        'VOICE_TO_ONSET_MAPPING':
+          'prefix': 'VOICE_TO_ONSET_MAPPING'
+          'body': 'VOICE_TO_ONSET_MAPPING = [${1:}]'
 
 
+# ROTATE_VOICES = False
 
-             """
+        'ROTATE_VOICES':
+          'prefix': 'ROTATE_VOICES'
+          'body': 'ROTATE_VOICES = False'
+
+# ORDER_CORPUS_BY_DESCRIPTOR = None
+
+        'ORDER_CORPUS_BY_DESCRIPTOR':
+          'prefix': 'ORDER_CORPUS_BY_DESCRIPTOR'
+          'body': 'ORDER_CORPUS_BY_DESCRIPTOR = None'
+
+# RESTRICT_CORPUS_SELECT_PERCENTAGE_BY_STRING = {}
+
+        'RESTRICT_CORPUS_SELECT_PERCENTAGE_BY_STRING':
+          'prefix': 'RESTRICT_CORPUS_SELECT_PERCENTAGE_BY_STRING'
+          'body': 'RESTRICT_CORPUS_SELECT_PERCENTAGE_BY_STRING = {${1:}}'
+
+# RESTRICT_CORPUS_OVERLAP_BY_STRING = {}
+
+        'RESTRICT_CORPUS_OVERLAP_BY_STRING':
+          'prefix': 'RESTRICT_CORPUS_OVERLAP_BY_STRING'
+          'body': 'RESTRICT_CORPUS_OVERLAP_BY_STRING = {${1:}}'
+
+# INSTRUMENTS = None
+#
+# #######  NORMALIZATION  #######
+# NORMALIZATION_METHOD = 'standard'
+
+        'NORMALIZATION_METHOD':
+          'prefix': 'NORMALIZATION_METHOD'
+          'body': 'NORMALIZATION_METHOD = "standard"'
+
+# NORMALIZATION_DELTA_FREEDOM = 0 # 0=default stddev
+
+        'NORMALIZATION_DELTA_FREEDOM':
+          'prefix': 'NORMALIZATION_DELTA_FREEDOM'
+          'body': 'NORMALIZATION_DELTA_FREEDOM = ${1:0} #0=default stddev'
+
+# CLUSTER_MAPPING = {}
+
+        'CLUSTER_MAPPING':
+          'prefix': 'CLUSTER_MAPPING'
+          'body': 'CLUSTER_MAPPING = {${1:}}'
+
+#
+# #######  CONCATENATE SELECTION  #######
+# SUPERIMPOSE = si()
+# ALWAYS_MAKE_COMPLETE_MATCHING_RESULTS = False
+
+        'ALWAYS_MAKE_COMPLETE_MATCHING_RESULTS':
+          'prefix': 'ALWAYS_MAKE_COMPLETE_MATCHING_RESULTS'
+          'body': 'ALWAYS_MAKE_COMPLETE_MATCHING_RESULTS = False'
+
+# RANDOMIZE_AMPLITUDE_FOR_SIM_SELECTION = False
+
+        'RANDOMIZE_AMPLITUDE_FOR_SIM_SELECTION':
+          'prefix': 'RANDOMIZE_AMPLITUDE_FOR_SIM_SELECTION'
+          'body': 'RANDOMIZE_AMPLITUDE_FOR_SIM_SELECTION = False'
+
+# OUTPUT_GAIN_DB = 0.
+
+        'OUTPUT_GAIN_DB':
+          'prefix': 'OUTPUT_GAIN_DB'
+          'body': 'OUTPUT_GAIN_DB = ${1:0.}'
+
+# RANDOM_SEED = None
+
+        'RANDOM_SEED':
+          'prefix': 'RANDOM_SEED'
+          'body': 'RANDOM_SEED = None'
+
+#
+# #######  POST-CONCATENATION EVENT MANIPULATION  #######
+# OUTPUTEVENT_ALIGN_PEAKS = False
+
+        'OUTPUTEVENT_ALIGN_PEAKS':
+          'prefix': 'OUTPUTEVENT_ALIGN_PEAKS'
+          'body': 'OUTPUTEVENT_ALIGN_PEAKS = False'
+
+# OUTPUTEVENT_TIME_STRETCH = 1.
+
+        'OUTPUTEVENT_TIME_STRETCH':
+          'prefix': 'OUTPUTEVENT_TIME_STRETCH'
+          'body': 'OUTPUTEVENT_TIME_STRETCH = ${1:1.}'
+
+# OUTPUTEVENT_TIME_ADD = 0.
+
+        'OUTPUTEVENT_TIME_ADD':
+          'prefix': 'OUTPUTEVENT_TIME_ADD'
+          'body': 'OUTPUTEVENT_TIME_ADD = ${1:0.}'
+
+# OUTPUTEVENT_QUANTIZE_TIME_INTERVAL = 0.25
+
+        'OUTPUTEVENT_QUANTIZE_TIME_INTERVAL':
+          'prefix': 'OUTPUTEVENT_QUANTIZE_TIME_INTERVAL'
+          'body': 'OUTPUTEVENT_QUANTIZE_TIME_INTERVAL = ${1:0.25}'
+
+# OUTPUTEVENT_QUANTIZE_TIME_METHOD = None # snapToGrid | medianAggregate
+
+        'OUTPUTEVENT_QUANTIZE_TIME_METHOD':
+          'prefix': 'OUTPUTEVENT_QUANTIZE_TIME_METHOD'
+          'body': 'OUTPUTEVENT_QUANTIZE_TIME_METHOD = None #snapToGrid | medianAggregate'
+
+# OUTPUTEVENT_DURATION_SELECT = 'cps' # cps | tgt
+
+        'OUTPUTEVENT_DURATION_SELECT':
+          'prefix': 'OUTPUTEVENT_DURATION_SELECT'
+          'body': 'OUTPUTEVENT_DURATION_SELECT = "cps" #cps | tgt'
+
+# OUTPUTEVENT_DURATION_MIN = None
+
+        'OUTPUTEVENT_DURATION_MIN':
+          'prefix': 'OUTPUTEVENT_DURATION_MIN'
+          'body': 'OUTPUTEVENT_DURATION_MIN = None'
+
+# OUTPUTEVENT_DURATION_MAX = None
+
+        'OUTPUTEVENT_DURATION_MAX':
+          'prefix': 'OUTPUTEVENT_DURATION_MAX'
+          'body': 'OUTPUTEVENT_DURATION_MAX = None'
+
+# OUTPUTEVENT_CLASSIFY = {'numberClasses': 0, 'descriptors': ['mfcc1-seg', 'mfcc2-seg', 'mfcc3-seg', 'mfcc4-seg']} # only classifies if numberClasses >= 2
+
+        'OUTPUTEVENT_CLASSIFY':
+          'prefix': 'OUTPUTEVENT_CLASSIFY'
+          'body': 'OUTPUTEVENT_CLASSIFY = {"numberClasses": ${1:0}, "descriptors": ["mfcc1-seg", "mfcc2-seg", "mfcc3-seg", "mfcc4-seg"]} # only classifies if numberClasses >= 2'
+
+#
+# ############  CSOUND RENDERING  ############
+# CSOUND_SR = 48000
+
+        'CSOUND_SR':
+          'prefix': 'CSOUND_SR'
+          'body': 'CSOUND_SR = ${1:48000}'
+
+# CSOUND_KSMPS = 128
+
+        'CSOUND_KSMPS':
+          'prefix': 'CSOUND_KSMPS'
+          'body': 'CSOUND_KSMPS = ${1:128}'
+
+# CSOUND_BITS = 16
+
+        'CSOUND_BITS':
+          'prefix': 'CSOUND_BITS'
+          'body': 'CSOUND_BITS = ${1:16}'
+
+# CSOUND_CHANNEL_RENDER_METHOD = "corpusmax" # corpusmax | stereo | targetoutputmix | oneChannelPerVoice | oneChannelPerOverlap
+
+       'CSOUND_CHANNEL_RENDER_METHOD':
+         'prefix': 'CSOUND_CHANNEL_RENDER_METHOD'
+         'body': 'CSOUND_CHANNEL_RENDER_METHOD = "targetoutputmix"
+         # corpusmax | stereo | targetoutputmix | oneChannelPerVoice | oneChannelPerOverla'
+
+
+# CSOUND_STRETCH_CORPUS_TO_TARGET_DUR = None # None | transpose | pv
+
+        'CSOUND_STRETCH_CORPUS_TO_TARGET_DUR':
+          'prefix': 'CSOUND_STRETCH_CORPUS_TO_TARGET_DUR'
+          'body': 'CSOUND_STRETCH_CORPUS_TO_TARGET_DUR = None #None | transpose | pv '
+
+# CSOUND_PLAY_RENDERED_FILE = True
+
+        'CSOUND_PLAY_RENDERED_FILE':
+          'prefix': 'CSOUND_PLAY_RENDERED_FILE'
+          'body': 'CSOUND_PLAY_RENDERED_FILE = True'
+
+# CSOUND_NORMALIZE = False
+
+        'CSOUND_NORMALIZE':
+          'prefix': 'CSOUND_NORMALIZE'
+          'body': 'CSOUND_NORMALIZE = False'
+
+# CSOUND_NORMALIZE_PEAK_DB = -3
+
+        'CSOUND_NORMALIZE_PEAK_DB':
+          'prefix': 'CSOUND_NORMALIZE_PEAK_DB'
+          'body': 'CSOUND_NORMALIZE_PEAK_DB = ${1:-3}'
+
+#
+# ################  DESCRIPTOR COMPUTATION SETTINGS  ################
+# DESCRIPTOR_OVERRIDE_DATA_PATH = None
+
+        'DESCRIPTOR_OVERRIDE_DATA_PATH':
+          'prefix': 'DESCRIPTOR_OVERRIDE_DATA_PATH'
+          'body': 'DESCRIPTOR_OVERRIDE_DATA_PATH = None'
+
+# DESCRIPTOR_FORCE_ANALYSIS = False
+
+        'DESCRIPTOR_FORCE_ANALYSIS':
+          'prefix': 'DESCRIPTOR_FORCE_ANALYSIS'
+          'body': 'DESCRIPTOR_FORCE_ANALYSIS = False'
+
+# DESCRIPTOR_WIN_SIZE_SEC = 0.04096
+
+        'DESCRIPTOR_WIN_SIZE_SEC':
+          'prefix': 'DESCRIPTOR_WIN_SIZE_SEC'
+          'body': 'DESCRIPTOR_WIN_SIZE_SEC = ${1:0.04096}'
+
+# DESCRIPTOR_HOP_SIZE_SEC = 0.01024
+
+        'DESCRIPTOR_HOP_SIZE_SEC':
+          'prefix': 'DESCRIPTOR_HOP_SIZE_SEC'
+          'body': 'DESCRIPTOR_HOP_SIZE_SEC = ${1:0.01024}'
+
+# DESCRIPTOR_ENERGY_ENVELOPE_HOP_SEC = 0.005
+
+        'DESCRIPTOR_ENERGY_ENVELOPE_HOP_SEC':
+          'prefix': 'DESCRIPTOR_ENERGY_ENVELOPE_HOP_SEC'
+          'body': 'DESCRIPTOR_ENERGY_ENVELOPE_HOP_SEC = ${1:0.005}'
+
+# # ircamdescriptor
+# IRCAMDESCRIPTOR_RESAMPLE_RATE = 12500
+
+        'IRCAMDESCRIPTOR_RESAMPLE_RATE':
+          'prefix': 'IRCAMDESCRIPTOR_RESAMPLE_RATE'
+          'body': 'IRCAMDESCRIPTOR_RESAMPLE_RATE = ${1:12500}'
+
+# IRCAMDESCRIPTOR_WINDOW_TYPE = 'blackman'
+
+        'IRCAMDESCRIPTOR_WINDOW_TYPE':
+          'prefix': 'IRCAMDESCRIPTOR_WINDOW_TYPE'
+          'body': 'IRCAMDESCRIPTOR_WINDOW_TYPE = ${1:"blackman"}'
+
+# IRCAMDESCRIPTOR_F0_MAX_ANALYSIS_FREQ = 5000
+
+        'IRCAMDESCRIPTOR_F0_MAX_ANALYSIS_FREQ':
+          'prefix': 'IRCAMDESCRIPTOR_F0_MAX_ANALYSIS_FREQ'
+          'body': 'IRCAMDESCRIPTOR_F0_MAX_ANALYSIS_FREQ = ${1:5000}'
+
+# IRCAMDESCRIPTOR_F0_MIN_FREQUENCY = 20
+
+        'IRCAMDESCRIPTOR_F0_MIN_FREQUENCY':
+          'prefix': 'IRCAMDESCRIPTOR_F0_MIN_FREQUENCY'
+          'body': 'IRCAMDESCRIPTOR_F0_MIN_FREQUENCY = ${1:20}'
+
+# IRCAMDESCRIPTOR_F0_MAX_FREQUENCY = 5000
+
+        'IRCAMDESCRIPTOR_F0_MAX_FREQUENCY':
+          'prefix': 'IRCAMDESCRIPTOR_F0_MAX_FREQUENCY'
+          'body': 'IRCAMDESCRIPTOR_F0_MAX_FREQUENCY = ${1:5000}'
+
+# IRCAMDESCRIPTOR_F0_AMP_THRESHOLD = 1
+
+        'IRCAMDESCRIPTOR_F0_AMP_THRESHOLD':
+          'prefix': 'IRCAMDESCRIPTOR_F0_AMP_THRESHOLD'
+          'body': 'IRCAMDESCRIPTOR_F0_AMP_THRESHOLD = ${1:1}'
+
+# IRCAMDESCRIPTOR_NUMB_MFCCS = 13
+
+        'IRCAMDESCRIPTOR_NUMB_MFCCS':
+          'prefix': 'IRCAMDESCRIPTOR_NUMB_MFCCS'
+          'body': 'IRCAMDESCRIPTOR_NUMB_MFCCS = ${1:13}'
+
+# # other binary locations - None means disabled, otherwise specify a full path
+# SUPERVP_BIN = '/Users/hecceite/Applications/AudioSculpt \3.4.6/AudioSculpt \3.4.6.app/Contents/MacOS/supervp'
+
+        'SUPERVP_BIN':
+          'prefix': 'SUPERVP_BIN'
+          'body': 'SUPERVP_BIN = ${"path_to_binary"}'
+
+# PM2_BIN = None
+
+        'PM2_BIN':
+          'prefix': 'PM2_BIN'
+          'body': 'PM2_BIN = ${"path_to_binary"}'
+
+#
+# ###############  USER INTERACTION / PRINTING  ##############
+# SEARCH_PATHS = []
+
+        'SEARCH_PATHS':
+          'prefix': 'SEARCH_PATHS'
+          'body': 'SEARCH_PATHS = [${1:}]'
+
+# VERBOSITY = 2
+
+        'VERBOSITY':
+          'prefix': 'VERBOSITY'
+          'body': 'VERBOSITY = ${1:2}'
+
+# TARGET_SEGMENT_LABELS_INFO = 'logic'
+
+        'TARGET_SEGMENT_LABELS_INFO':
+          'prefix': 'TARGET_SEGMENT_LABELS_INFO'
+          'body': 'TARGET_SEGMENT_LABELS_INFO = ${1:"logic"}'
+
+# EXPERIMENTAL = {}
+
+        'EXPERIMENTAL':
+          'prefix': 'EXPERIMENTAL'
+          'body': 'EXPERIMENTAL = {${1:}}'
+
+ ###############################################Scenarios from Dr Ben Hackbarth videos
