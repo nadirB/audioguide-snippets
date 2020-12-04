@@ -1,4 +1,4 @@
-  "name": "audioguide-snippets",
+{  "name": "audioguide-snippets",
   "author": "nadir B. <hecceite@free.fr>",
   "main": "./lib/audioguide-snippets",
   "version": "0.0.0",
@@ -12,6 +12,5 @@
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
-  },
-  "dependencies": {
   }
+}
