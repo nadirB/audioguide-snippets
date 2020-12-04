@@ -9,4 +9,4 @@ Snippets allow you to enter a simple prefix in the editor and hit "Tab" to expan
 To see all the available snippets for the AudioGuide file type that you currently have open, choose "Snippets: Available" in the Command Palette "Shif+Cmd+P":
 
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![A screenshot of your package](https://github.com/nadirB/audioguide-snippets/blob/main/audioguide-snippets_01.gif)
