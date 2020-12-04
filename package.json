@@ -1,4 +1,5 @@
-{  "name": "audioguide-snippets",
+{
+  "name": "audioguide-snippets",
   "author": "nadir B. <hecceite@free.fr>",
   "main": "./lib/audioguide-snippets",
   "version": "0.0.0",
@@ -8,7 +9,7 @@
   "activationCommands": {
     "atom-workspace": "audioguide-snippets:toggle"
   },
-  "repository": "https://github.com/nadirB/audioguide-snippets",
+  "repository": "https://github.com/nadirB/audioguide-snippets.git",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
