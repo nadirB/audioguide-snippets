@@ -9,7 +9,7 @@ Snippets allow you to enter a simple prefix in the editor and hit "Tab" to expan
 Install :
 
 Go to Atom's preferences then to the Install tab.
-Search for the audioguide-snippets package then click install (re-launch Atom if necessary).
+Search for the audioguide-snippets package then click install (re-launch Atom if necessary : Ctrl+Option+Cmd+L).
 
 Usage :
 
