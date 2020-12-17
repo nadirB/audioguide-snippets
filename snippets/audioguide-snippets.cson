@@ -11,25 +11,7 @@
 
           # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
 
-          Cf. docs_v1.5.html
-          """
-
-#Corpus Segmentation with agGranuateSf.py
-
-       'agGranuateSf':
-         'prefix': 'agGranuateSf'
-         'body': """
-          # A script you can use to segment your corpus files for use with granular synthesis is called ‘agGranulateSf.py’. Like agSegmentSf.py, agGranulateSf.py creates textfiles which denote the start and stop times of sound segments in a multi-segment audiofile. Unlike agSegmentSf.py, this script chops up a soundfile into evenly size grains and provides a mechanism for adjusting grain overlap. To segment a corpus file, ‘cd’ into the AudioGuide1.5 folder and run the following command:
-
-          python agGranuateSf.py examples/lachenmann.aiff
-
-          # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
-
-          # It is important to note that, if you wish to window each grain with a fade in and fade out when concatenating, you will need to use the csf() onsetLen and offsetLen keyword arguments.
-
-          csf('lachenmann.aiff', onsetLen='50%', offsetLen='50%')
-
-          Cf. docs_v1.5.html
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
           """
 
 #Finessing Corpus Segmentation
@@ -45,7 +27,7 @@
 
          # changes the rise ratio from the default (1.1) to 4. This means that a frame's amplitude must be four times louder than the previous one to start a new segment
 
-         Cf. docs_v1.5.html
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          """
 #Whole Directory Segmentation
 
@@ -58,7 +40,7 @@
 
         # create a segmentation file for each aiff file located in mydir/
 
-        Cf. docs_v1.5.html
+        # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
 
          """
 
@@ -93,15 +75,64 @@
 
           # The options file used by the concatenate script is a python file that defines a bunch of variables. Most variables are simply floats and strings. For instance, to change the path of the csound output sound file, add the following line to your options file:
 
-          CSOUND_RENDER_FILEPATH = '/path/to/the/file/i/want.aiff'
+          # CSOUND_RENDER_FILEPATH = '/path/to/the/file/i/want.aiff'
 
           # sets the path of the csound output aiff file
 
-          DESCRIPTOR_HOP_SIZE_SEC = 0.02049
+          # DESCRIPTOR_HOP_SIZE_SEC = 0.02049
 
           # change the analysis hop size
 
-          Cf. docs_v1.5.html
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+          """
+
+#agConcatenate interactive mode
+
+       'agConcatenate_interactive_mode':
+         'prefix': 'agConcatenate_interactive_mode'
+         'body': """
+          #As of version 1.6, agConcatenate.py can be run in "interactive mode" by adding the -i flag at runtime. The interactive mode runs agConcatenate.py as normal except that, after rendering and playing the concatenated output, the program stays open and monitors the loaded options file for changes. When the options file is modified and saved, agConcatenate.py will examine the changes and only rerun the parts of the program needed to create a new output. This makes auditioning->tweaking->auditioning the same options file much faster, especially when working with large corpi.
+
+          # To run agConcatenate.py in interactive mode, add the -i flag:
+
+           python agConcatenate.py examples/01-simplest.py -i
+
+          # To exit interactive mode, type control-C.
+
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+          """
+
+#Corpus Segmentation with agGranulateSf.py
+
+       'agGranulateSf':
+         'prefix': 'agGranulateSf'
+         'body': """
+          # A script you can use to segment your corpus files for use with granular synthesis is called ‘agGranulateSf.py’. Like agSegmentSf.py, agGranulateSf.py creates textfiles which denote the start and stop times of sound segments in a multi-segment audiofile. Unlike agSegmentSf.py, this script chops up a soundfile into evenly size grains and provides a mechanism for adjusting grain overlap. To segment a corpus file, ‘cd’ into the AudioGuide1.5 folder and run the following command:
+
+          python agGranulateSf.py examples/lachenmann.aiff
+
+          # As a result of running this python script, AudioGuide1.5 automatically writes a textfile with the exact same name and path as the soundfile, but adding the extension '.txt' -- in this case: examples/lachenmann.aiff.txt
+
+          # It is important to note that, if you wish to window each grain with a fade in and fade out when concatenating, you will need to use the csf() onsetLen and offsetLen keyword arguments.
+
+          csf('lachenmann.aiff', onsetLen='50%', offsetLen='50%')
+
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+          """
+
+
+############################################
+
+# Descriptor Retrieval with agGetSfDescriptors.py
+
+       'agGetSfDescriptors':
+         'prefix': 'agGetSfDescriptors'
+         'body': """
+         # agGetSfDescriptors.py is a simple script that exports continuous descriptor values of a soundfile. The output format is a json dictionary. To use it simply call the script with the soundfile as the first argument and the output path as the second argument.
+
+         python agGetSfDescriptors.py examples/lachenmann.aiff examples/lachenmann.json
+
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
           """
 
 ############################################
@@ -110,17 +141,10 @@
        'tsf()':
          'prefix': 'tsf()'
          'body': """
-          # The TARGET variable is written as a tsf() object which requires a path to a soundfile and also takes the following optional keyword arguments:
 
-            tsf('pathtosoundfile', start=0, end=file-length, thresh=-40, offsetRise=1.5, offsetThreshAdd=+12, offsetThreshAbs=-80, scaleDb=0, minSegLen=0.05, maxSegLen=1000, midiPitchMethod='composite', stretch=1, segmentationFilepath=None)
+          Target = tsf('${1:path_to_soundfile}', start=${2:0}, end=${3:file-length}, thresh=${4:-40}, offsetRise=${5:1.5}, offsetThreshAdd=${6:+12}, offsetThreshAbs=${7:-80}, scaleDb=${8:0}, minSegLen=${9:0.05}, maxSegLen=${10:1000}, midiPitchMethod='${11:composite}', stretch=${12:1}, segmentationFilepath=${13:None},multiriseBool=${14:False}, multirisePercentDev=${15:20},multiriseSteps=${16:5}, decompose={${17:}})
 
-          TARGET = tsf('cage.aiff') # uses the whole soundfile at its given amplitude
-
-          TARGET = tsf('cage.aiff', start=5, end=7, scaleDb=6) # only use seconds 5-7 of cage.aiff at double the amplitude.
-
-          TARGET = tsf('cage.aiff', start=2, end=3, stretch=2) # only uses seconds 2-3, but stretches the sound with supervp to twice its duration before concatenation. Note that, in order to use this option, you must set the SUPERVP_BIN variable in the AudioGuide1.5/audioguide/defaults.py file.
-
-          Cf. docs_v1.5.html
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
           """
 
 ############################################
@@ -129,7 +153,6 @@
        'csf()':
          'prefix': 'csf()'
          'body': """
-          # The CORPUS variable is defined as a list of csf() objects which require a path to a soundfile OR a directory. File paths and/or directory paths may be full paths or relative paths to the location of the options file you’re using or a path found in the SEARCH_PATHS variable. A csf() object required the soundfile/directory name, then takes the following optional keyword arguments:
 
           csf(${2:"pathToFileOrDirectoryOfFiles"}, start=${3:None}, end=${4:None},
           includeTimes=[${5:}], excludeTimes=[${6:}], pitchfilter={${7:}}, limit=[${8:}],
@@ -137,27 +160,9 @@
           scaleDb=${13:0.0}, limitDur=${14:None}, clipDurationToTarget=${15:False},
           onsetLen=${16:0.01}, offsetLen="${17:30%}", midiPitchMethod="${18:composite}",
           transMethod=${19:None}, transQuantize=${20:0}, concatFileName=${21:None},
-          allowRepetition=${22:True}, restrictRepetition=${23:0.5}, restrictOverlaps=${24:None}, restrictInTime=${25:0}, maxPercentTargetSegments=${26:None}, scaleDistance=${27:1}, superimposeRule=${28:None}, segmentationFile=${29:None}, segmentationExtension="${30:.txt}")
+          allowRepetition=${22:True}, restrictRepetition=${23:0.5}, restrictOverlaps=${24:None}, restrictInTime=${25:0}, maxPercentTargetSegments=${26:None}, scaleDistance=${27:1}, superimposeRule=${28:None}, segmentationFile=${29:None}, segmentationExtension="${30:.txt}", envelopeSlope=${31:1}, wholeFileMinStart=${32:0},  wholeFileMaxEnd=${33:None}, metadata=[${34:}], instrTag=${35:None}, instrParams={${36:}})
 
-          #The simplest way to include a soundfile in your corpus is to use its path as the first argument of the csf() object:
-
-          CORPUS = [csf("lachenmann.aiff")]
-
-          # will search for a segmentation file called lachenmann.aiff.txt and add all of its segments to the corpus
-
-          #The simplest way to include a directory of soundfiles in your corpus is to use its path as the first argument of the csf() object:
-
-          CORPUS = [csf("lachenmann.aiff"), csf('piano')]
-
-          # will use segments from lachenmann.aiff as well as all sounds in the directory called piano
-
-          # Note that csf segments may also be specified as a list of lists. Each segment should be given as ['path', starttime, endtime]. If endtime = None, the duration of the soundfile is used. See example below:
-
-          CORPUS = [csf([['myfile1.wav', 14.5, 15.3], ['myfile1.wav', 103.7, 104.1], ['myfile2.wav', 0, None]])]
-
-          # will use two segments from myfile1.wav and then entire file myfile2.wav as the corpus
-
-          Cf. docs_v1.5.html
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
           """
 
 ##############################################
@@ -166,73 +171,126 @@
        'Descriptors':
          'prefix': 'd()'
          'body': """
-          # Use the d() object to specify a descriptor, how it is weighted, and how it is normalized. The d() object takes 1 argument -- the name of the desired descriptor -- and then several optional keywords arguments, detailed below.  :
 
-          d('descriptor name', weight=1, norm=2, normmethod='stddev', distance='euclidean', energyWeight=False)
+          d('${1:audiodescriptor}', weight=${2:1}, norm=${3:2}, normmethod='${4:stddev}', distance='${5:euclidean}', limit=${6:False}, simultaneous=${7:None}, energyWeight=${8:False}, origin='${9:SEARCH}', neededBy=['${10:target}', '${11:corpus}'], packagename=${12:None})
 
-          # - descriptor name - a string of the name of the desired descriptor. Note that most (but not all) descriptors have both a time varying version as well as a power-weighted averaged version (‘-seg’). All possible descriptors are listed in Appendix 1.
-
-          # - weight - How to weight this descriptor in relation to other descriptors.
-
-          SEARCH= [spass('closest', d('centroid', weight=1), d('noisiness', weight=0.5))]
-
-          # centroid is twice as important as noisiness.
-
-          # - norm - A value of 2 normalizes the target and corpus data separately. A value of 1 normalizes the target and corpus data together. 2 will yield a better rendering of the target’s morphological contour. 1 will remain more faithful to concrete descriptor values. I recommend using 2 by default, only using 1 when dealing with very ‘descriptive’ descriptors like duration or pitch.
-
-          SEARCH = [spass('closest', d('centroid'), d('effDur-seg', norm=1))]
-
-          # - normmethod - How to normalize data -- either ‘stddev’ or ‘minmax’. minmax is more precise, stddev is more forgiving of ‘outliers.’
-
-          # - distance - Only valid for time-varying descriptors. How to arithmetically measure distance between target and corpus arrays.
-
-          # ‘euclidean’ - does a simple least squares distance.
-          # ‘pearson’ - a pearson correlation measurement.
-
-          SEARCH = [spass('closest', d('centroid', distance='pearson'))]
-
-          # uses a pearson correlation formula for determining distance between target and corpus centroid arrays.
-
-          # - energyWeight - Only valid for time-varying descriptors. Weight distance calculations with the corpus segments’ energy values. The means that softer frames will not affect distance as much as louder frames. Only works if distance=‘euclidean’.
-
-          # Cf. docs_v1.5.html
+          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
           """
 
-###############################################SEARCH variable and spass() object
+###############################################
+# SEARCH variable and spass() object
 
-       'SEARCH':
-         'prefix': 'SEARCH'
+       'SEARCH_01':
+         'prefix': 'spass()'
          'body': """
-         # The SEARCH variable tells AudioGuide how to pick corpus segments to match target segments. The SEARCH variable is a list of spass() objects which is evaluated in order for each segment in the target soundfile. Multiple search operations are chained together -- the output of each spass() becomes the input of the following spass().
 
          # spass(method, list of descriptors, d1, d2, d3,...) + keywords.
-         # Cf. docs_v1.5.html
+
          # Documented in 02-searching.py
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
 
          SEARCH = [
-           spass(...),
-           # first spass. the input is all valid corpus samples
-
-           spass(...),
-           # second spass. the input is the output from the previous spass
+           spass("${1:closest}",d("${2:centroid}"))
          ]
 
-         SEARCH = [
-           spass("${1:closest}",d ("${2:centroid}"))
-         ]
+         # SEARCH = [
+         #   spass(...),
+         #   # first spass. the input is all valid corpus samples
+         #
+         #   spass(...),
+         #   # second spass. the input is the output from the previous spass
+         # ]
+
          """
+#############################################
+
+        'SEARCH_02':
+           'prefix': 'spass(closest)'
+           'body': """
+
+           SEARCH = [
+             spass("${1:closest}",d("${2:audiodescriptor}"))
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
+
+#############################################
+
+        'SEARCH_03':
+           'prefix': 'spass(farthest)'
+           'body': """
+
+           SEARCH = [
+             spass("${1:farthest}",d("${2:audiodescriptor}"))
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
+#############################################
+
+        'SEARCH_04':
+           'prefix': 'spass(closest_percent)'
+           'body': """
+
+           SEARCH = [
+             spass("${1:closest_percent}",d("${2:audiodescriptor}"), percent=${3:10})
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
+#############################################
+
+
+        'SEARCH_05':
+           'prefix': 'spass(farthest_percent)'
+           'body': """
+
+           SEARCH = [
+             spass("${1:farthest_percent}",d("${2:audiodescriptor}", percent=${3:10}))
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
+
+#############################################
+
+        'SEARCH_06':
+           'prefix': 'spass(ratio_limit)'
+           'body': """
+
+           SEARCH = [
+
+             spass("${1:ratio_limit}",d("${2:audiodescriptor}", minratio=${3:0.9}, maxratio=${4:1.1})
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
+
+#############################################
+
+        'SEARCH_07':
+           'prefix': 'spass(parser)'
+           'body': """
+
+           SEARCH = [
+
+             spass("${1:parser}", ${2:test}, ${3:submethod}, ${4:ifTrue}, ${5:ifFalse})
+           ]
+
+           # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+           """
 
 #############################################
 #The SUPERIMPOSE variable and si() object
 
        'SUPERIMPOSE':
-         'prefix': 'SUPERIMPOSE'
+         'prefix': 'si()'
          'body': """
-         # Use the si() object for specifying how corpus segments may be superimposed during concatenation.
 
-         SUPERIMPOSE = si(minSegment=${1:None}, maxSegment=${2:None}, minOnset=${3:None}, maxOnset=${4:8}, minOverlap=${5:None}, maxOverlap=${6:None}, searchOrder=${7:'power'}, calcMethod=${8:'mixture'})
+         SUPERIMPOSE = si(minSegment=${1:None}, maxSegment=${2:None}, minFrame=${3:None}, maxFrame=${4:None}, minOverlap=${5:None}, maxOverlap=${6:None}, overlapAmpThresh=${7:-70},  searchOrder='${8:power}',  subtractScale=${9:1}, subtractDur='${10:corpusDur}',  ampDur='${11:corpusDur}',  overlapDur='${12:corpusEffDur}',  calcMethod='${13:mixture}',  peakAlign=${14:False},  peakAlignEnvelope='${15:subtracted}', incr=${16:1})
 
-         # Cf. docs_v1.5.html
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          # SUPERIMPOSE documented in 03-superimposition.py
          """
 
@@ -244,9 +302,6 @@
          'prefix': 'score()'
          'body': """
 
-         # The score() object permits elements of the CORPUS to be translated into musical notation via bach in Max/MSP
-
-         # The score() object is assigned to 'INSTRUMENTS' in the options file. score() consists of a list of instru() objects, each of which represents an instrument in the output score. instr()s are linked to cps() entries through their first argument, the instrTag string.
 
          # here, the corpus consists of pizzicato and arco string samples tagged with the string 'violin'
 
@@ -259,9 +314,12 @@
 
          INSTRUMENTS = score(
          instr('violin'),
+         tempo=${1:60},
+         meter='${2:4/4}',
+
          )
 
-         # Cf. docs_v1.5.html
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          """
 
 ##############################################
@@ -288,7 +346,7 @@
         instr('cello', clef='F'), # only has pizz
         )
 
-         # Cf. docs_v1.5.html
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          """
 
 ############################################
@@ -298,36 +356,16 @@
          'prefix': 'instr()'
          'body': """
 
-         # the instr() object has keywords that affect the instrument's behavoir and how the instrument is translated into musical notation.
+         # the instr() object has keywords that affect the instrument's behavior and how the instrument is translated into musical notation.
 
-         instr('instrTag', temporal_mode=${1:'sus'}, minspeed=${2:0.075}, interval_limit_breakpoints=[${3:}], interval_limit_range_per_sec=${4:None}, pitchoverride=${5:None}, polyphony_max_voices=${6:1}, polyphony_max_range=${7:None}, polyphony_min_range=${8:None}, polyphony_permit_unison=${9:False}, polyphony_max_db_difference=${10:4}, technique_switch_delay_map=[${11:}], clef='${12:G}', key='${13:CM}'))
+         instr('instrTag', temporal_mode=${1:'sus'}, minspeed=${2:0.075}, interval_limit_breakpoints=[${3:}], interval_limit_range_per_sec=${4:None}, polyphony_minspeed=${5:None}, polyphony_max_voices=${6:1}, polyphony_max_range=${7:None}, polyphony_min_range=${8:None}, polyphony_permit_unison=${9:False}, polyphony_max_db_difference=${10:4}, technique_switch_delay_map=[${11:}], clef='${12:G}', key='${13:CM}', dynamics=(${14:'pp', 'p', 'mp', 'mf', 'f', 'ff'})))
 
-         # Cf. docs_v1.5.html
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          """
 
+###########################################
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#defaults'
+#defaults.py'
 
 ##############  OUTPUT FILES  #############
 
@@ -525,6 +563,54 @@
           'prefix': 'RANDOM_SEED'
           'body': 'RANDOM_SEED = None'
 
+
+#DYNAMIC_TO_DECIBEL
+
+        'DYNAMIC_TO_DECIBEL':
+          'prefix': 'DYNAMIC_TO_DECIBEL'
+          'body': """
+          DYNAMIC_TO_DECIBEL (type=dict, default={'pp': -50, 'p': -40, 'mp': -34, 'mf': -24, 'f': -20, 'ff': -10})
+
+          # This variable specifies the default decibel values for dynamic strings used by csf(scaleDb='filenamedyn')
+          """
+
+#FILENAMESTRING_TO_DYNAMICS
+
+        'FILENAMESTRING_TO_DYNAMICS':
+          'prefix': 'FILENAMESTRING_TO_DYNAMICS'
+          'body': """
+          FILENAMESTRING_TO_DYNAMICS (type=dict, default={})
+
+          # User-defined strings for matching soundfile names with dynamics as in DYNAMIC_TO_DECIBEL. E.g. {'really loud': 'ff', 'loudish': 'f'}
+
+          # Any filenames which match one these partial strings will be assigned the given dynamic, and then the decibel scalar found in DYNAMIC_TO_DECIBEL will be used if scaleDb='filenamedyn'.
+          """
+
+# PRINT_SELECTION_HISTO
+
+        'PRINT_SELECTION_HISTO':
+          'prefix': 'PRINT_SELECTION_HISTO'
+          'body': """
+            PRINT_SELECTION_HISTO (type=bool, default=False)
+            # if True will print robust information about corpus selection after concatenation. If false (the default) will add this information to the log file, if used.
+          """
+
+
+
+
+# PRINT_SIM_SELECTION_HISTO
+
+        'PRINT_SIM_SELECTION_HISTO':
+          'prefix': 'PRINT_SIM_SELECTION_HISTO'
+          'body': """
+            PRINT_SIM_SELECTION_HISTO (type=bool, default=False)
+
+            # if True will print robust information about corpus overlapping selection after concatenation. If false (the default) will add this information to the log file, if used.
+          """
+
+
+
+
 #
 # #######  POST-CONCATENATION EVENT MANIPULATION  #######
 # OUTPUTEVENT_ALIGN_PEAKS = False
@@ -709,7 +795,7 @@
           'body': 'IRCAMDESCRIPTOR_NUMB_MFCCS = ${1:13}'
 
 # # other binary locations - None means disabled, otherwise specify a full path
-# SUPERVP_BIN = '/Users/hecceite/Applications/AudioSculpt \3.4.6/AudioSculpt \3.4.6.app/Contents/MacOS/supervp'
+# SUPERVP_BIN = None
 
         'SUPERVP_BIN':
           'prefix': 'SUPERVP_BIN'
@@ -746,5 +832,3 @@
         'EXPERIMENTAL':
           'prefix': 'EXPERIMENTAL'
           'body': 'EXPERIMENTAL = {${1:}}'
-
- ###############################################Scenarios from Dr Ben Hackbarth videos
