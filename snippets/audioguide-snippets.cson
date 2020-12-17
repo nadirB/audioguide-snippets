@@ -362,6 +362,17 @@
 
          # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
          """
+###########################################
+# custom slot assignment:
+
+       'INSTRUMENTS_BACH_SLOTS_DICT':
+         'prefix': 'INSTRUMENTS_BACH_SLOTS_DICT'
+         'body': """
+
+         INSTRUMENTS_BACH_SLOTS_DICT = {1: '${1:technique}', 2: '${2:fullpath}', 3: '${3:sfskiptime}', 10: '${4:noisiness-seg}', 11: '${5:centroid}'}
+
+         # Cf. http://www.benhackbarth.com/audioGuide/docs_v1.6.html
+         """
 
 ###########################################
 
