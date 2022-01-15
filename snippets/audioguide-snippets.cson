@@ -412,7 +412,8 @@
 
          # the instr() object has keywords that affect the instrument's behavior and how the instrument is translated into musical notation.
 
-         instr('instrTag', temporal_mode=${1:'sus'}, minspeed=${2:0.075}, interval_limit_breakpoints=[${3:}], interval_limit_range_per_sec=${4:None}, polyphony_minspeed=${5:None}, polyphony_max_voices=${6:1}, polyphony_max_range=${7:None}, polyphony_min_range=${8:None}, polyphony_permit_unison=${9:False}, polyphony_max_db_difference=${10:4}, technique_switch_delay_map=[${11:}], clef='${12:G}', key='${13:CM}', dynamics=(${14:'pp', 'p', 'mp', 'mf', 'f', 'ff'})))
+         instr('instrTag', temporal_mode=${1:'sus'}, minspeed=${2:0.075}, interval_limit_breakpoints=[${3:}], interval_limit_range_per_sec=${4:None},
+         polyphony_minspeed=${5:None}, polyphony_max_voices=${6:1}, polyphony_max_range=${7:None}, polyphony_min_range=${8:None}, polyphony_permit_unison=${9:False}, polyphony_max_db_difference=${10:4}, technique_switch_delay_map=[${11:}], clef='${12:G}', key='${13:CM}', pitchoverride=${14:None},))
 
          # Cf. docs_v1.7.html
          """
