@@ -2,6 +2,8 @@
 
 AudioGuide Command Snippets.
 
+This package is deprecated because Atom editor is no longer developed.
+
 This is an Atom Editor Package for Dr Ben Hackbarth's [AudioGuide](https://forum.ircam.fr/projects/detail/audioguide/)
 
 Snippets allow you to enter a simple prefix in the editor and hit "Tab" to expand the prefix into a larger code block with templated values. We can continue pressing Tab and the cursor will move to the next value of the body tag or "Shift+Tab" to go backwards.
